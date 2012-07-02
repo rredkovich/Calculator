@@ -14,7 +14,6 @@
 @property (nonatomic) BOOL floatNumberIsEntering;//Показывает есть ли на дисплее дробная точка
 @property (nonatomic, strong) CalculatorBrain *brain;
 @property (nonatomic) double pi; //Константа числа Пи
-@property (nonatomic) BOOL piIsPressed; //Показывает была ли нажата кнопка pi
 
 
 @end
@@ -24,7 +23,6 @@
 @synthesize floatNumberIsEntering = _floatNumberIsEntering;
 @synthesize brain = _brain;
 @synthesize pi = _pi;
-@synthesize piIsPressed = _piIsPressed;
 
 -(double)  pi{
     
@@ -51,7 +49,6 @@
         self.display.text = sender.currentTitle;
         self.userIsInTheMiddleOfEnteringANumber = YES;
     }
-    //NSLog(@"Button %@ pressed", [sender currentTitle]);
     
 }
 
@@ -64,25 +61,15 @@
     NSString *operation = [sender currentTitle];
     double result = [self.brain performOperation:operation];
         
-    //NSLog(@"Operator %@ pressed", operation);
     self.display.text = [NSString stringWithFormat:@"%g", result];
      
 }
 
 - (IBAction)enterPressed 
 {
-    if (!self.piIsPressed){
-    [self.brain pushOperand:[self.display.text doubleValue]];
-    self.userIsInTheMiddleOfEnteringANumber = NO;
-    self.floatNumberIsEntering = NO;
-    //NSLog(@"Enter pressed");
-    }else {
-        double result = [self.display.text doubleValue] * self.pi;
-        self.display.text = [NSString stringWithFormat:@"%g", result];
         [self.brain pushOperand:[self.display.text doubleValue]];
         self.userIsInTheMiddleOfEnteringANumber = NO;
-    }
-    
+        self.floatNumberIsEntering = NO;
 }
 - (IBAction)dotPressed { 
     if (!self.floatNumberIsEntering) {
@@ -98,17 +85,14 @@
     }
     
 }
-- (IBAction)piPressed {
+- (IBAction)piPressed { //this method just put pi into stak like any other number
+    
+    //check for 3 π * case
     if (self.userIsInTheMiddleOfEnteringANumber) {
-        double result = [self.display.text doubleValue] * self.pi;
-        self.display.text = [NSString stringWithFormat:@"%g", result];
-        [self.brain pushOperand:[self.display.text doubleValue]];
-        self.piIsPressed = NO;
-        self.userIsInTheMiddleOfEnteringANumber = NO;
-    } else {
-        self.piIsPressed = YES;
-        self.userIsInTheMiddleOfEnteringANumber = YES;
+        [self enterPressed];
     }
+
+    [self.brain pushOperand:self.pi];
     
 }
 

@@ -3,4 +3,4 @@ Calculator/en.lproj/*
 Calculator-Prefix.pch
 CalculatorAppDelegate.*
 Calculator.xcodeproj/*
-
+.DS_Store
