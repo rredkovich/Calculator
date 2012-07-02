@@ -1,0 +1,6 @@
+*.plist
+Calculator/en.lproj/*
+Calculator-Prefix.pch
+CalculatorAppDelegate.*
+Calculator.xcodeproj/*
+
