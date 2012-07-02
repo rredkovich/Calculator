@@ -13,7 +13,6 @@
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
 @property (nonatomic) BOOL floatNumberIsEntering;//Показывает есть ли на дисплее дробная точка
 @property (nonatomic, strong) CalculatorBrain *brain;
-@property (nonatomic) double pi; //Константа числа Пи
 
 
 @end
@@ -22,12 +21,6 @@
 @synthesize userIsInTheMiddleOfEnteringANumber = _userIsInTheMiddleOfEnteringANumber;
 @synthesize floatNumberIsEntering = _floatNumberIsEntering;
 @synthesize brain = _brain;
-@synthesize pi = _pi;
-
--(double)  pi{
-    
-    return 3.14159265358979;
-}
 
 
 @synthesize display = _display;
@@ -92,7 +85,7 @@
         [self enterPressed];
     }
 
-    [self.brain pushOperand:self.pi];
+    [self.brain pushOperand:M_PI];
     
 }
 
