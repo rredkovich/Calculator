@@ -95,15 +95,12 @@
     
 }
 - (IBAction)clearPressed {
-    //clear History display
-    self.historyDisplay.text = [self.historyDisplay.text stringByReplacingOccurrencesOfString:self.historyDisplay.text withString:@""];
-    
-    //clear display
-    self.display.text = [self.display.text stringByReplacingOccurrencesOfString:self.display.text withString:@""];
-    
-    //release operandStack
-    [self.brain releaseStack];
-    
+
+    self.historyDisplay.text = @""; //clears the display
+
+    self.display.text = @"0"; //clears the history display
+
+    [self.brain releaseStack]; //releases operandStack    
     
 }
 
