@@ -11,7 +11,7 @@
 
 @interface CalculatorViewController ()
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
-@property (nonatomic) BOOL floatNumberIsEntering;//Показывает есть ли на дисплее дробная точка
+@property (nonatomic) BOOL floatNumberIsEntering;
 @property (nonatomic, strong) CalculatorBrain *brain;
 
 
@@ -24,6 +24,7 @@
 
 
 @synthesize display = _display;
+@synthesize historyDisplay = _historyDisplay;
 
 -(CalculatorBrain *)brain{
     if (!_brain) {
@@ -52,24 +53,27 @@
     }
         
     NSString *operation = [sender currentTitle];
+    self.historyDisplay.text = [self.historyDisplay.text stringByAppendingString:[sender currentTitle]];//add an operation sign to the history display
     double result = [self.brain performOperation:operation];
         
     self.display.text = [NSString stringWithFormat:@"%g", result];
+    self.historyDisplay.text = [[[self.historyDisplay.text stringByAppendingString:@" = "] stringByAppendingString:[NSString stringWithFormat:@"%g", result]] stringByAppendingString:@" "]; //add result to the history display
      
 }
 
 - (IBAction)enterPressed 
 {
-        [self.brain pushOperand:[self.display.text doubleValue]];
+        [self.brain pushOperand:[self.display.text doubleValue]]; 
+        self.historyDisplay.text = [[self.historyDisplay.text stringByAppendingString:self.display.text] stringByAppendingString:@" "]; //adding current operands to the History display
         self.userIsInTheMiddleOfEnteringANumber = NO;
         self.floatNumberIsEntering = NO;
 }
 - (IBAction)dotPressed { 
     if (!self.floatNumberIsEntering) {
-        //Проверяем нет ли уже в числе на дисплее точки
+        //checking for a dot on the display
         NSString *textOnTheDisplay = self.display.text;
         NSRange range = [textOnTheDisplay rangeOfString:@"."];
-        //Если нет, то позволяем ее "нарисовать"
+        //and put it on the display if it have not been found
         if (range.location == NSNotFound){
         self.display.text = [self.display.text stringByAppendingString: @"."];    
         self.floatNumberIsEntering = YES;
@@ -86,7 +90,25 @@
     }
 
     [self.brain pushOperand:M_PI];
+    self.historyDisplay.text = [[self.historyDisplay.text stringByAppendingString:@"π"] stringByAppendingString:@" "]; //display π on the history display
+    
+    
+}
+- (IBAction)clearPressed {
+    //clear History display
+    self.historyDisplay.text = [self.historyDisplay.text stringByReplacingOccurrencesOfString:self.historyDisplay.text withString:@""];
+    
+    //clear display
+    self.display.text = [self.display.text stringByReplacingOccurrencesOfString:self.display.text withString:@""];
+    
+    //release operandStack
+    [self.brain releaseStack];
+    
     
 }
 
+- (void)viewDidUnload {
+    [self setHistoryDisplay:nil];
+    [super viewDidUnload];
+}
 @end

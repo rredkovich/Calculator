@@ -12,5 +12,7 @@
 
 -(void) pushOperand:(double)operand;
 -(double) performOperation:(NSString *)operation;
+-(void) releaseStack;
+
 
 @end

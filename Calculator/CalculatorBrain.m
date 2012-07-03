@@ -75,4 +75,9 @@
     
 }
 
+-(void) releaseStack{
+    
+    [self.operandStack removeAllObjects];
+}
+
 @end
