@@ -12,6 +12,7 @@
 
 - (void)pushOperand:(double)operand;
 - (double)performOperation:(NSString *)op;
+- (void)releaseStack; 
 
 @property (nonatomic, readonly) id program;
 
