@@ -37,6 +37,12 @@
     [self.programStack addObject: [NSNumber numberWithDouble:operand]];    
 }
 
+- (void)pushVariable:(NSString *)variable{
+    
+    [self.programStack addObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:0]  forKey:variable]]; //Is it correct to use NSNull instead of [NSNumber numberWIthDoule:0]?.. 
+    
+}
+
 
 - (double)performOperation:(NSString *)operation
 {
@@ -51,7 +57,7 @@
     id topOfStack = [stack lastObject];
     if (topOfStack) [stack removeLastObject];
     
-    if ([topOfStack isKindOfClass:[NSNumber class]])
+    if ([topOfStack isKindOfClass:[NSNumber class]]) //check for operation or operand
     {
         result = [topOfStack doubleValue];
     }
@@ -70,7 +76,23 @@
         } else if ([operation isEqualToString:@"/"]) {
             double divisor = [self popOperandOffProgramStack:stack];
             if (divisor) result = [self popOperandOffProgramStack:stack] / divisor;
+        } else if([@"sin" isEqualToString:operation]){
+            result = sin([self popOperandOffProgramStack:stack]);
+            
+        }else if ([@"cos" isEqualToString:operation]){
+            result = cos([self popOperandOffProgramStack:stack]);
+            
+        }else if([@"sqrt" isEqualToString:operation]){
+                double radicant = [self popOperandOffProgramStack:stack];
+                if (radicant >= 0) {
+                    result = sqrt(radicant);
+                }else{
+                result = 0;
+            }
         }
+    }else if ([topOfStack isKindOfClass:[NSDictionary class]]){
+        result = topOfStack objectWithKey
+        } (id)objectForKey:(id)aKey
     }
     
     return result;
@@ -90,4 +112,5 @@
     [self.programStack removeAllObjects];
 }
 
+    
 @end

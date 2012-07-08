@@ -63,7 +63,14 @@
 
 - (IBAction)enterPressed 
 {
-        [self.brain pushOperand:[self.display.text doubleValue]]; 
+        NSString *signOnTheDisplay = self.display.text;
+    //check for variable or digit
+    if ([signOnTheDisplay isEqualToString:@"x"] || [signOnTheDisplay isEqualToString:@"y"] || [signOnTheDisplay isEqualToString:@"z"]){ 
+        [self.brain pushVariable:signOnTheDisplay];
+    }else {
+        [self.brain pushOperand:[signOnTheDisplay doubleValue]];        
+        }
+    
         self.historyDisplay.text = [[self.historyDisplay.text stringByAppendingString:self.display.text] stringByAppendingString:@" "]; //adding current operands to the History display
         self.userIsInTheMiddleOfEnteringANumber = NO;
         self.floatNumberIsEntering = NO;
@@ -82,7 +89,7 @@
     }
     
 }
-- (IBAction)piPressed { //this method just put pi into stak like any other number
+- (IBAction)piPressed { //this method just put pi into stack like any other number
     
     //check for 3 π * case
     if (self.userIsInTheMiddleOfEnteringANumber) {
