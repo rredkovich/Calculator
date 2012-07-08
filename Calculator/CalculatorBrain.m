@@ -14,7 +14,15 @@
 @end
 
 @implementation CalculatorBrain
+@synthesize variablesSet = _variablesSet;
 @synthesize programStack = _programStack;
+
+-(NSDictionary *)variablesSet{
+    if(_variablesSet){
+        _variablesSet = [[NSDictionary alloc] init];
+    }
+    return _variablesSet;
+}
 
 -(NSMutableArray *)programStack {
     if (!_programStack) {
@@ -89,13 +97,31 @@
                 }else{
                 result = 0;
             }
+        }else if([topOfStack isEqualToString:@"x"] || [topOfStack isEqualToString:@"y"] || [topOfStack isEqualToString:@"z"]){
+            result = 0;
         }
-    }else if ([topOfStack isKindOfClass:[NSDictionary class]]){
-        result = topOfStack objectWithKey
-        } (id)objectForKey:(id)aKey
     }
     
     return result;
+}
+
++ (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variableValues{
+    NSMutableArray *stack;
+    if ([program isKindOfClass:[NSArray class]]) {
+        stack = [program mutableCopy];
+        //search and replace for variables
+    }
+    for (int i=0; [stack count]; i++){
+        if ([[stack objectAtIndex:i ] isKindOfClass: [NSString class]]){
+            if ([[stack objectAtIndex:i ] isEqualToString:@"x"]) {
+
+                 [stack replaceObjectAtIndex:i withObject:[[self variablesSet] objectForKey:@"x"]];
+                
+            }
+        }
+    }
+    
+    return [self popOperandOffProgramStack:stack];
 }
 
 + (double)runProgram:(id)program

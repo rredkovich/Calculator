@@ -16,6 +16,7 @@
 - (void)pushVariable:(NSString *)variable;
 
 @property (nonatomic, readonly) id program;
+@property (nonatomic) NSDictionary *variablesSet;
 
 + (NSString *)descriptionOfProgram:(id)program;
 + (double)runProgram:(id)program;
