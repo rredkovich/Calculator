@@ -39,7 +39,7 @@
 
 - (void)pushVariable:(NSString *)variable{
     
-    [self.programStack addObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithDouble:0]  forKey:variable]]; //Is it correct to use NSNull instead of [NSNumber numberWIthDoule:0]?.. 
+    [self.programStack addObject:variable]; 
     
 }
 
