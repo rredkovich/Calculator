@@ -110,6 +110,10 @@
     [self.brain releaseStack]; //releases operandStack    
     
 }
+- (IBAction)testPressed{
+   self.brain.variablesSet = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithDouble:12], @"x", [NSNumber numberWithDouble:2], @"y",[NSNumber numberWithDouble:54], @"z", nil];
+    
+}
 
 - (void)viewDidUnload {
     [self setHistoryDisplay:nil];

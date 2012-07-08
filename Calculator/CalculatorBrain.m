@@ -55,7 +55,8 @@
 - (double)performOperation:(NSString *)operation
 {
     [self.programStack addObject:operation];
-    return [[self class] runProgram:self.program];
+    //return [[self class] runProgram:self.program];
+    return [[self class] runProgram:self.program usingVariableValues:self.variablesSet];
 }
 
 + (double)popOperandOffProgramStack:(NSMutableArray *)stack
@@ -106,22 +107,26 @@
 }
 
 + (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variableValues{
+    
     NSMutableArray *stack;
     if ([program isKindOfClass:[NSArray class]]) {
         stack = [program mutableCopy];
-        //search and replace for variables
-    }
+        
+    }   //search and replace variables
     for (int i=0; [stack count]; i++){
         if ([[stack objectAtIndex:i ] isKindOfClass: [NSString class]]){
             if ([[stack objectAtIndex:i ] isEqualToString:@"x"]) {
-
-                 [stack replaceObjectAtIndex:i withObject:[[self variablesSet] objectForKey:@"x"]];
-                
-            }
+                 [stack replaceObjectAtIndex:i withObject:[variableValues objectForKey:@"x"]];               
+            }else if ([[stack objectAtIndex:i ] isEqualToString:@"y"]) {
+                [stack replaceObjectAtIndex:i withObject:[variableValues objectForKey:@"y"]]; 
+            }else if ([[stack objectAtIndex:i ] isEqualToString:@"z"]) {
+                [stack replaceObjectAtIndex:i withObject:[variableValues objectForKey:@"z"]]; 
+                }
+            
         }
     }
-    
     return [self popOperandOffProgramStack:stack];
+    
 }
 
 + (double)runProgram:(id)program
