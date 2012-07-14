@@ -14,12 +14,16 @@
 - (double)performOperation:(NSString *)op;
 - (void)releaseStack; 
 - (void)pushVariable:(NSString *)variable;
+- (NSString *)giveSelfDescription;
 
 @property (nonatomic, readonly) id program;
 @property (nonatomic) NSDictionary *variablesSet;
 
 + (NSString *)descriptionOfProgram:(id)program;
++ (NSString *)descriptionOfTopOfStack:(NSMutableArray *)stack;
 + (double)runProgram:(id)program;
 + (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variableValues;
++ (BOOL)isAnOperand:(NSString *)operand;
++ (BOOL)isAVariable:(NSString *)variable; 
 
 @end

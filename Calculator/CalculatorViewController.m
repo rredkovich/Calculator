@@ -46,6 +46,18 @@
     
 }
 
+- (IBAction)variablePressed:(UIButton *)sender
+{
+    
+    [self.brain pushVariable:sender.currentTitle];
+    self.historyDisplay.text = [self.brain giveSelfDescription];
+    
+}
+
+- (IBAction)testPressed{
+    self.brain.variablesSet = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithDouble:12], @"x", [NSNumber numberWithDouble:2], @"y",[NSNumber numberWithDouble:54], @"z", nil];
+}
+
 - (IBAction)operationPressed:(UIButton *)sender 
 {
     if (self.userIsInTheMiddleOfEnteringANumber) {
@@ -53,11 +65,10 @@
     }
         
     NSString *operation = [sender currentTitle];
-    self.historyDisplay.text = [self.historyDisplay.text stringByAppendingString:[sender currentTitle]];//add an operation sign to the history display
     double result = [self.brain performOperation:operation];
         
     self.display.text = [NSString stringWithFormat:@"%g", result];
-    self.historyDisplay.text = [[[self.historyDisplay.text stringByAppendingString:@" = "] stringByAppendingString:[NSString stringWithFormat:@"%g", result]] stringByAppendingString:@" "]; //add result to the history display
+    self.historyDisplay.text = [self.brain giveSelfDescription];
      
 }
 
@@ -71,7 +82,7 @@
         [self.brain pushOperand:[signOnTheDisplay doubleValue]];        
         }
     
-        self.historyDisplay.text = [[self.historyDisplay.text stringByAppendingString:self.display.text] stringByAppendingString:@" "]; //adding current operands to the History display
+        self.historyDisplay.text = [self.brain giveSelfDescription];
         self.userIsInTheMiddleOfEnteringANumber = NO;
         self.floatNumberIsEntering = NO;
 }
@@ -108,10 +119,6 @@
     self.display.text = @"0"; //clears the history display
 
     [self.brain releaseStack]; //releases operandStack    
-    
-}
-- (IBAction)testPressed{
-   self.brain.variablesSet = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithDouble:12], @"x", [NSNumber numberWithDouble:2], @"y",[NSNumber numberWithDouble:54], @"z", nil];
     
 }
 

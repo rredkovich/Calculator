@@ -17,6 +17,36 @@
 @synthesize variablesSet = _variablesSet;
 @synthesize programStack = _programStack;
 
++(BOOL) isAnOperand:(NSString *)operand {
+    BOOL result = NO;
+    
+    if ([operand isKindOfClass:[NSString class]]&&
+        ([operand isEqualToString:@"+"]||
+         [operand isEqualToString:@"-"] || 
+         [operand isEqualToString:@"*"] || 
+         [operand isEqualToString:@"/"] ||
+         [operand isEqualToString:@"sqrt"] ||
+         [operand isEqualToString:@"cos"]||
+         [operand isEqualToString:@"sin"]||
+         [operand isEqualToString:@"π"])) 
+        result = YES;
+    
+    return result;    
+}
+
++ (BOOL) isAVariable:(NSString *)variable{
+    BOOL result = NO;
+    
+    if ([variable isKindOfClass:[NSString class]]&&
+        ([variable isEqualToString:@"x"]||
+         [variable isEqualToString:@"y"] || 
+         [variable isEqualToString:@"z"])) 
+        result = YES;
+    
+    return result;
+    
+}
+
 -(NSDictionary *)variablesSet{
     if(_variablesSet){
         _variablesSet = [[NSDictionary alloc] init];
@@ -36,9 +66,54 @@
     return [self.programStack copy];
 }
 
++ (NSString *)descriptionOfTopOfStack:(NSMutableArray *)stack{
+    NSString *result;
+    id topOfStack = [stack lastObject];
+    if (topOfStack) [stack removeLastObject];
+    
+    
+    if ([topOfStack isKindOfClass:[NSNumber class] ]) {         //topOfStack is a Number case
+        result = [NSString stringWithFormat:@"%@",topOfStack];
+        
+    }else if ([topOfStack isKindOfClass:[NSString class]] && [[self class] isAVariable:topOfStack] ) { //topOfStack is a variable 
+        result = topOfStack;
+    
+    }else if ([[self class] isAnOperand:topOfStack] && ( [topOfStack isEqualToString:@"cos"] || [topOfStack isEqualToString:@"sin"] || [topOfStack isEqualToString:@"sqrt"])) {
+        result =  [[[topOfStack stringByAppendingString:@"("] stringByAppendingString:topOfStack] stringByAppendingString:@")"]; //topOfStack is cos/sin/sqrt
+        //result =  [[[topOfStack stringByAppendingString:@"("] stringByAppendingString:[NSString stringWithFormat:@"%@",[self runProgram:stack]]] stringByAppendingString:@")"]; неудачная попытка вывести под операндом конечное число
+
+        
+    }else if ([[self class] isAnOperand:topOfStack] && ( [topOfStack isEqualToString:@"+"] || [topOfStack isEqualToString:@"-"])) { //topOfStack is + or -
+
+        NSString *secondOperand = [[NSString alloc] initWithString:[[self class] descriptionOfTopOfStack:stack]];
+        result = [[[[@"(" stringByAppendingString:[[self class] descriptionOfTopOfStack:stack]] stringByAppendingString:topOfStack] stringByAppendingString:secondOperand] stringByAppendingString:@")"];
+        
+
+    }else if ([[self class] isAnOperand:topOfStack] && ( [topOfStack isEqualToString:@"*"] || [topOfStack isEqualToString:@"/"])) { 
+
+                NSString *secondOperand = [[NSString alloc] initWithString:[[self class] descriptionOfTopOfStack:stack]];
+               result =  [[[[self class] descriptionOfTopOfStack:stack] stringByAppendingString:topOfStack] stringByAppendingString:secondOperand];  
+             }
+    return result;
+    
+}
+
 + (NSString *)descriptionOfProgram:(id)program
 {
-    return @"Implement this in Homework #2";
+    NSString *result = [[NSString alloc] init];
+    NSMutableArray *stack;
+    if ([program isKindOfClass:[NSMutableArray class]]){
+        stack = program;
+    } else if ([program isKindOfClass:[NSArray class]]){
+        stack = [program mutableCopy];
+    }
+    
+    while ([stack count]){
+       //NSString *first = [[NSString alloc] initWithString:[[self class] descriptionOfTopOfStack:stack]];
+        result = [result stringByAppendingString:[[self class] descriptionOfTopOfStack:stack]];
+    }
+    
+    return result;
 }
 
 -(void) pushOperand:(double)operand{
@@ -51,11 +126,13 @@
     
 }
 
+- (NSString *)giveSelfDescription{
+    return [[self class] descriptionOfProgram:self.program];
+}
 
 - (double)performOperation:(NSString *)operation
 {
     [self.programStack addObject:operation];
-    //return [[self class] runProgram:self.program];
     return [[self class] runProgram:self.program usingVariableValues:self.variablesSet];
 }
 
@@ -108,26 +185,32 @@
 
 + (double)runProgram:(id)program usingVariableValues:(NSDictionary *)variableValues{
     
+    double result;
     NSMutableArray *stack;
-    if ([program isKindOfClass:[NSArray class]]) {
+    if ([program isKindOfClass:[NSArray class]] && variableValues) {
         stack = [program mutableCopy];
         
-    }   //search and replace variables
-    for (int i=0; [stack count]; i++){
-        if ([[stack objectAtIndex:i ] isKindOfClass: [NSString class]]){
-            if ([[stack objectAtIndex:i ] isEqualToString:@"x"]) {
-                 [stack replaceObjectAtIndex:i withObject:[variableValues objectForKey:@"x"]];               
-            }else if ([[stack objectAtIndex:i ] isEqualToString:@"y"]) {
-                [stack replaceObjectAtIndex:i withObject:[variableValues objectForKey:@"y"]]; 
-            }else if ([[stack objectAtIndex:i ] isEqualToString:@"z"]) {
-                [stack replaceObjectAtIndex:i withObject:[variableValues objectForKey:@"z"]]; 
+        //search and replace variables
+        for (int i=0; i <= ([stack count] - 1); i++){
+            if ([[stack objectAtIndex:i ] isKindOfClass: [NSString class]]){
+                if ([[stack objectAtIndex:i ] isEqualToString:@"x"]) {
+                    [stack replaceObjectAtIndex:i withObject:[variableValues objectForKey:@"x"]];               
+                }else if ([[stack objectAtIndex:i ] isEqualToString:@"y"]) {
+                    [stack replaceObjectAtIndex:i withObject:[variableValues objectForKey:@"y"]]; 
+                }else if ([[stack objectAtIndex:i ] isEqualToString:@"z"]) {
+                    [stack replaceObjectAtIndex:i withObject:[variableValues objectForKey:@"z"]]; 
                 }
-            
+                
+            }
         }
+        result = [self popOperandOffProgramStack:stack];
+        
+    } else if ([program isKindOfClass:[NSArray class]]){
+        result =  [self runProgram:program];
     }
-    return [self popOperandOffProgramStack:stack];
-    
+    return result;
 }
+
 
 + (double)runProgram:(id)program
 {
